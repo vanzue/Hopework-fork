@@ -15,7 +15,8 @@ function UserTaskList() {
   const [filterType, setFilterType] = useState('');
   const [filterDifficulty, setFilterDifficulty] = useState('');
   const [openCreateTaskDialog, setOpenCreateTaskDialog] = useState(false);
-  const [newTaskName, setNewTaskName] = useState('');
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [newTaskDescription, setNewTaskDescription] = useState('');
   const [newTaskType, setNewTaskType] = useState('');
   const [newTaskTotalItems, setNewTaskTotalItems] = useState('');
   const [newTaskDifficulty, setNewTaskDifficulty] = useState('');
@@ -34,7 +35,7 @@ function UserTaskList() {
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch('/api/task/list');
+      const response = await fetch('https://hopeworkapi.azurewebsites.net/api/task/list');
       if (!response.ok) {
         throw new Error('Failed to fetch task list');
       }
@@ -44,14 +45,14 @@ function UserTaskList() {
       console.error('Error fetching task list:', error);
       // Mock data
       const mockTasks = [
-        { id: 1, name: 'Image Classification', type: 'Image', difficulty: 'Easy', reward: 10, deadline: '2023-12-31', totalItems: 100, completedItems: 10, description: 'Classify images by identifying the main objects or scenes within them.' },
-        { id: 2, name: 'Text Translation', type: 'Text', difficulty: 'Medium', reward: 20, deadline: '2023-12-31', totalItems: 100, completedItems: 15, description: 'Translate given text from one language to another while preserving the original meaning.' },
-        { id: 3, name: 'Data Entry', type: 'Data', difficulty: 'Easy', reward: 15, deadline: '2023-12-31', totalItems: 30, completedItems: 30, description: 'Accurately input provided information into specified databases or spreadsheets.' },
-        { id: 4, name: 'Audio Transcription', type: 'Audio', difficulty: 'Hard', reward: 30, deadline: '2023-12-31', totalItems: 100, completedItems: 41, description: 'Transcribe audio files into text, including speaker identification and timestamps.' },
-        { id: 5, name: 'Sentiment Analysis', type: 'Text', difficulty: 'Medium', reward: 25, deadline: '2023-12-31', totalItems: 100, completedItems: 20, description: 'Analyze text content to determine its sentiment (positive, negative, or neutral).' },
-        { id: 6, name: 'Video Annotation', type: 'Video', difficulty: 'Hard', reward: 35, deadline: '2023-12-31', totalItems: 10, completedItems: 5, description: 'Add annotations to videos, including object tagging, action descriptions, and scene classification.' },
-        { id: 7, name: 'Speech Recognition', type: 'Audio', difficulty: 'Medium', reward: 28, deadline: '2023-12-31', totalItems: 40, completedItems: 20, description: 'Convert speech to text, recognizing different accents and dialects.' },
-        { id: 8, name: 'Image Segmentation', type: 'Image', difficulty: 'Hard', reward: 40, deadline: '2023-12-31', totalItems: 100, completedItems: 0, description: 'Segment images into multiple semantic regions, precisely labeling each pixel.' },
+        { id: 1, title: 'Image Classification', type: 'Image', status: "pending", difficulty: 'Easy', reward_per_unit: 10, deadline: '2023-12-31', total_units: 100, completed_units: 10, description: 'Classify images by identifying the main objects or scenes within them.' },
+        { id: 2, title: 'Text Translation', type: 'Text', status: "Available", difficulty: 'Medium', reward_per_unit: 20, deadline: '2023-12-31', total_units: 100, completed_units: 15, description: 'Translate given text from one language to another while preserving the original meaning.' },
+        { id: 3, title: 'Data Entry', type: 'Data', status: "pending", difficulty: 'Easy', reward_per_unit: 15, deadline: '2023-12-31', total_units: 30, completed_units: 30, description: 'Accurately input provided information into specified databases or spreadsheets.' },
+        { id: 4, title: 'Audio Transcription', type: 'Audio', status: "pending", difficulty: 'Hard', reward_per_unit: 30, deadline: '2023-12-31', total_units: 100, completed_units: 41, description: 'Transcribe audio files into text, including speaker identification and timestamps.' },
+        { id: 5, title: 'Sentiment Analysis', type: 'Text', status: "Available", difficulty: 'Medium', reward_per_unit: 25, deadline: '2023-12-31', total_units: 100, completed_units: 20, description: 'Analyze text content to determine its sentiment (positive, negative, or neutral).' },
+        { id: 6, title: 'Video Annotation', type: 'Video', status: "pending", difficulty: 'Hard', reward_per_unit: 35, deadline: '2023-12-31', total_units: 10, completed_units: 5, description: 'Add annotations to videos, including object tagging, action descriptions, and scene classification.' },
+        { id: 7, title: 'Speech Recognition', type: 'Audio', status: "Available", difficulty: 'Medium', reward_per_unit: 28, deadline: '2023-12-31', total_units: 40, completed_units: 20, description: 'Convert speech to text, recognizing different accents and dialects.' },
+        { id: 8, title: 'Image Segmentation', type: 'Image', status: "pending", difficulty: 'Hard', reward_per_unit: 40, deadline: '2023-12-31', total_units: 100, completed_units: 0, description: 'Segment images into multiple semantic regions, precisely labeling each pixel.' },
       ];
       setTasks(mockTasks);
     }
@@ -107,7 +108,8 @@ function UserTaskList() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ 
-        name: newTaskName, 
+        name: newTaskTitle,
+        description: newTaskDescription,
         type: newTaskType, 
         totalItems: newTaskTotalItems, 
         difficulty: newTaskDifficulty, 
@@ -157,8 +159,8 @@ function UserTaskList() {
   };
 
   const handleCloseCreateTaskDialog = () => {
-    // 重置所有输入字段
-    setNewTaskName('');
+    setNewTaskTitle('');
+    setNewTaskDescription('');
     setNewTaskType('');
     setNewTaskTotalItems('');
     setNewTaskDifficulty('');
@@ -179,7 +181,7 @@ function UserTaskList() {
   };
 
   const filteredTasks = tasks.filter(task => 
-    task.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    task.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (filterType === '' || task.type === filterType) &&
     (filterDifficulty === '' || task.difficulty === filterDifficulty)
   );
@@ -283,7 +285,7 @@ function UserTaskList() {
             <Card elevation={3} sx={{ display: 'flex', flexDirection: 'column' }}>
               <CardContent sx={{ p: 1.5 }}>
                 <Typography variant="h6" component="div" noWrap>
-                  {task.name}
+                  {task.title}
                 </Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                   <Typography variant="body2" color="textSecondary">
@@ -296,19 +298,20 @@ function UserTaskList() {
                   />
                 </Box>
                 <Typography variant="body2" component="p" sx={{ mb: 0.5 }}>
-                  Reward: ${task.reward}
+                  Reward: ${task.reward_per_unit}
                 </Typography>
                 <Typography variant="body2" component="p" sx={{ mb: 0.5 }}>
-                  Status: {
-                    task.completedItems === 0 ? 'Not Started' :
-                    task.completedItems === task.totalItems ? 'Completed' : 'In Progress'
-                  }
+                  Status: {task.status}
+                  {/* {
+                    task.completed_units === 0 ? 'Not Started' :
+                    task.completed_units === task.total_units ? 'Completed' : 'In Progress'
+                  } */}
                 </Typography>
                 <Box sx={{ width: '100%', mb: 1 }}>
                   <Typography variant="body2" component="p" sx={{ mb: 0.5 }}>
-                    Progress: {Math.round((task.completedItems / task.totalItems) * 100)}%
+                    Progress: {Math.round((task.completed_units / task.total_units) * 100)}%
                   </Typography>
-                  <LinearProgress variant="determinate" value={(task.completedItems / task.totalItems) * 100} />
+                  <LinearProgress variant="determinate" value={(task.completed_units / task.total_units) * 100} />
                 </Box>
               </CardContent>
               <CardActions sx={{ justifyContent: 'space-between', p: 1, '& > :not(:last-child)': { mr: 0.5 } }}>
@@ -329,7 +332,7 @@ function UserTaskList() {
 
       <Dialog open={openCreateTaskDialog} onClose={handleCloseCreateTaskDialog}>
         <DialogTitle>Create New Task</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ '& .MuiTextField-root': { marginBottom: 0 } }}>
           <TextField
             autoFocus
             margin="dense"
@@ -338,8 +341,22 @@ function UserTaskList() {
             type="text"
             fullWidth
             variant="outlined"
-            value={newTaskName}
-            onChange={(e) => setNewTaskName(e.target.value)}
+            value={newTaskTitle}
+            onChange={(e) => setNewTaskTitle(e.target.value)}
+            required
+          />
+          <TextField
+            margin="dense"
+            id="description"
+            label="Task Description"
+            type="text"
+            fullWidth
+            multiline
+            rows={2}
+            variant="outlined"
+            value={newTaskDescription}
+            onChange={(e) => setNewTaskDescription(e.target.value)}
+            sx={{ mt: 2 }}
             required
           />
           <FormControl fullWidth variant="outlined" sx={{ mt: 2 }} required>
@@ -437,7 +454,7 @@ function UserTaskList() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCreateTaskDialog}>Cancel</Button>
-          <Button onClick={handleCreateTask} disabled={!newTaskName || !newTaskType || !newTaskTotalItems || !newTaskDifficulty || !newTaskReward || !taskVisibility}>
+          <Button onClick={handleCreateTask} disabled={!newTaskTitle || !newTaskDescription || !newTaskType || !newTaskTotalItems || !newTaskDifficulty || !newTaskReward || !taskVisibility}>
             Create
           </Button>
         </DialogActions>
@@ -465,7 +482,7 @@ function UserTaskList() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseBulkUploadDialog}>Cancel</Button>
-          <Button onClick={handleBulkUpload} color="primary">
+          <Button onClick={handleBulkUpload} color="primary" disabled={!selectedFile}>
             Upload
           </Button>
         </DialogActions>

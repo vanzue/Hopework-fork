@@ -19,29 +19,30 @@ function UserTaskDetail() {
     const fetchTaskDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/task/${id}`);
+        const response = await fetch('https://hopeworkapi.azurewebsites.net/api/task/list');
         if (!response.ok) {
-          throw new Error('无法获取任务详情');
+          throw new Error('Failed to fetch task list');
         }
         const data = await response.json();
-        setTask(data);
+        const task = data.filter(task => task.id === +id)[0];
+
+        setTask(task);
       } catch (err) {
         // Mock data - replace with actual data fetching
-        const mockTask = [
-          { id: 1, name: 'Image Classification', type: 'Image', difficulty: 'Easy', reward: 10, deadline: '2023-12-31', totalItems: 100, completedItems: 10, description: 'Classify images by identifying the main objects or scenes within them.' },
-          { id: 2, name: 'Text Translation', type: 'Text', difficulty: 'Medium', reward: 20, deadline: '2023-12-31', totalItems: 100, completedItems: 15, description: 'Translate given text from one language to another while preserving the original meaning.' },
-          { id: 3, name: 'Data Entry', type: 'Data', difficulty: 'Easy', reward: 15, deadline: '2023-12-31', totalItems: 30, completedItems: 30, description: 'Accurately input provided information into specified databases or spreadsheets.' },
-          { id: 4, name: 'Audio Transcription', type: 'Audio', difficulty: 'Hard', reward: 30, deadline: '2023-12-31', totalItems: 100, completedItems: 41, description: 'Transcribe audio files into text, including speaker identification and timestamps.' },
-          { id: 5, name: 'Sentiment Analysis', type: 'Text', difficulty: 'Medium', reward: 25, deadline: '2023-12-31', totalItems: 100, completedItems: 20, description: 'Analyze text content to determine its sentiment (positive, negative, or neutral).' },
-          { id: 6, name: 'Video Annotation', type: 'Video', difficulty: 'Hard', reward: 35, deadline: '2023-12-31', totalItems: 10, completedItems: 5, description: 'Add annotations to videos, including object tagging, action descriptions, and scene classification.' },
-          { id: 7, name: 'Speech Recognition', type: 'Audio', difficulty: 'Medium', reward: 28, deadline: '2023-12-31', totalItems: 40, completedItems: 20, description: 'Convert speech to text, recognizing different accents and dialects.' },
-          { id: 8, name: 'Image Segmentation', type: 'Image', difficulty: 'Hard', reward: 40, deadline: '2023-12-31', totalItems: 100, completedItems: 0, description: 'Segment images into multiple semantic regions, precisely labeling each pixel.' },
-        ].filter(task => task.id === +id)[0];
+        // const mockTask = [
+        //   { id: 1, title: 'Image Classification', type: 'Image', status: "pending", difficulty: 'Easy', reward_per_unit: 10, deadline: '2023-12-31', total_units: 100, completed_units: 10, description: 'Classify images by identifying the main objects or scenes within them.' },
+        //   { id: 2, title: 'Text Translation', type: 'Text', status: "Available", difficulty: 'Medium', reward_per_unit: 20, deadline: '2023-12-31', total_units: 100, completed_units: 15, description: 'Translate given text from one language to another while preserving the original meaning.' },
+        //   { id: 3, title: 'Data Entry', type: 'Data', status: "pending", difficulty: 'Easy', reward_per_unit: 15, deadline: '2023-12-31', total_units: 30, completed_units: 30, description: 'Accurately input provided information into specified databases or spreadsheets.' },
+        //   { id: 4, title: 'Audio Transcription', type: 'Audio', status: "pending", difficulty: 'Hard', reward_per_unit: 30, deadline: '2023-12-31', total_units: 100, completed_units: 41, description: 'Transcribe audio files into text, including speaker identification and timestamps.' },
+        //   { id: 5, title: 'Sentiment Analysis', type: 'Text', status: "Available", difficulty: 'Medium', reward_per_unit: 25, deadline: '2023-12-31', total_units: 100, completed_units: 20, description: 'Analyze text content to determine its sentiment (positive, negative, or neutral).' },
+        //   { id: 6, title: 'Video Annotation', type: 'Video', status: "pending", difficulty: 'Hard', reward_per_unit: 35, deadline: '2023-12-31', total_units: 10, completed_units: 5, description: 'Add annotations to videos, including object tagging, action descriptions, and scene classification.' },
+        //   { id: 7, title: 'Speech Recognition', type: 'Audio', status: "Available", difficulty: 'Medium', reward_per_unit: 28, deadline: '2023-12-31', total_units: 40, completed_units: 20, description: 'Convert speech to text, recognizing different accents and dialects.' },
+        //   { id: 8, title: 'Image Segmentation', type: 'Image', status: "pending", difficulty: 'Hard', reward_per_unit: 40, deadline: '2023-12-31', total_units: 100, completed_units: 0, description: 'Segment images into multiple semantic regions, precisely labeling each pixel.' },
+        // ].filter(task => task.id === +id)[0];
 
-        console.log('---',mockTask)
-        setTask(mockTask);
+        // setTask(mockTask);
         // mock end
-        // setError(err.message);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -124,10 +125,28 @@ function UserTaskDetail() {
     setOpenDialog(true);
   };
 
-  const handleConfirmApply = () => {
-    // Logic to apply for the task
-    setOpenDialog(false);
-    navigate('/user/my-tasks');
+  const handleAcceptTask = () => {
+    fetch(`https://hopeworkapi.azurewebsites.net/api/task/${id}/review`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to accept task');
+      }
+      return response.json();
+    })
+    .then(data => {
+      alert('You have successfully accepted the task');
+      setOpenDialog(false);
+      navigate('/user/tasks');
+    })
+    .catch(error => {
+      console.error('Error accepting task:', error);
+      alert('Failed to accept task. Please try again.');
+    });
   };
 
   const handleCloseDialog = () => {
@@ -140,7 +159,7 @@ function UserTaskDetail() {
 
   const handlePauseTask = (taskId) => {
     // Send a request to pause the task
-    fetch(`/api/task/${taskId}/pause`, {
+    fetch(`https://hopeworkapi.azurewebsites.net/api/task/${taskId}/pause`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -152,7 +171,7 @@ function UserTaskDetail() {
       // Update page data
       setTask(prevTask => ({
         ...prevTask,
-        status: 'Paused'//状态？？？
+        status: 'Paused'// todo: check status data
       }));
       alert('Task has been successfully paused');
     })
@@ -164,7 +183,7 @@ function UserTaskDetail() {
 
   const handleCancelTask = (taskId) => {
     // Send a request to cancel the task
-    fetch(`/api/task/${taskId}/cancel`, {
+    fetch(`https://hopeworkapi.azurewebsites.net/api/task/${taskId}/cancel`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -176,7 +195,7 @@ function UserTaskDetail() {
       // Update task status
       setTask(prevTask => ({
         ...prevTask,
-        status: 'Cancelled'//状态？？？
+        status: 'Cancelled'// todo: check status data
       }));
       alert('Task has been successfully cancelled');
     })
@@ -219,7 +238,7 @@ function UserTaskDetail() {
           margin: 'auto'
         }}>
           <Typography variant="h4" gutterBottom>
-            {task.name}
+            {task.title}
           </Typography>
           <Chip 
             label={task.type} 
@@ -235,30 +254,31 @@ function UserTaskDetail() {
             {task.description}
           </Typography>
           <Grid container>
+            <Grid item xs={12}>
+              <Typography variant="subtitle1">Reward: ${task.reward_per_unit}</Typography>
+            </Grid>
             <Grid item xs={6}>
-              <Typography variant="subtitle1">Task: {task.completedItems}/{task.totalItems}</Typography>
+              <Typography variant="subtitle1">Task: {task.completed_units}/{task.total_units}</Typography>
             </Grid>
             <Grid item xs={6}>
               <Typography variant="subtitle1">
-                Status: {
-                  task.completedItems === 0 ? 'Not Started' :
-                  task.completedItems === task.totalItems ? 'Completed' : 'In Progress'
-                }
+                Status: {task.status}
+                {/* {
+                  task.completed_units === 0 ? 'Not Started' :
+                  task.completed_units === task.total_units ? 'Completed' : 'In Progress'
+                } */}
               </Typography>
             </Grid>
-            <Grid item xs={6}>
-              <Typography variant="subtitle1">Reward: ${task.reward}</Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <Typography variant="subtitle1">Deadline: {task.deadline}</Typography>
             </Grid>
           </Grid>
           <Typography variant="subtitle1">
-            Progress: {Math.round((task.completedItems / task.totalItems) * 100)}%
+            Progress: {Math.round((task.completed_units / task.total_units) * 100)}%
           </Typography>
           <LinearProgress 
             variant="determinate" 
-            value={(task.completedItems / task.totalItems) * 100} 
+            value={(task.completed_units / task.total_units) * 100} 
             sx={{ marginTop: '1rem', marginBottom: '1rem' }}
           />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
@@ -321,12 +341,37 @@ function UserTaskDetail() {
             Are you sure you want to apply for this task? Once applied, you'll be responsible for completing it before the deadline.
           </DialogContentText>
         </DialogContent>
+        <DialogContent>
+          <Typography variant="h6" gutterBottom>
+            Completion Status
+          </Typography>
+          <LinearProgress 
+            variant="determinate" 
+            value={(task.completed_units / task.total_units) * 100} 
+            sx={{ marginBottom: 2 }}
+          />
+          <Typography variant="body2" color="textSecondary">
+            Completed: {task.completed_units} / {task.total_units} units
+          </Typography>
+          <Typography variant="h6" gutterBottom sx={{ marginTop: 2 }}>
+            Quality Report
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            Accuracy: {task.accuracy ? `${task.accuracy}%` : 'No data available'}
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            Average Completion Time: {task.average_completion_time ? `${task.average_completion_time} minutes` : 'No data available'}
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            Customer Satisfaction: {task.customer_satisfaction ? `${task.customer_satisfaction}/5` : 'No data available'}
+          </Typography>
+        </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleConfirmApply} color="primary" variant="contained">
-            Confirm
+          <Button onClick={handleAcceptTask} color="success" variant="contained">
+            Accept Task
           </Button>
         </DialogActions>
       </Dialog>
