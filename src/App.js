@@ -18,14 +18,21 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LoginRegister />} />
+
+        {/* Company page */}
         <Route path="/company/tasks" element={<TaskManagement />} />
-        <Route path="/company/create-task" element={<CreateTask />} />
         <Route path="/company/task/:id" element={<TaskDetail />} />
-        <Route path="/company/bulk-upload" element={<BulkUploadTask />} />
+        
         <Route path="/company/acceptance/:id" element={<AcceptanceReview />} />
         <Route path="/company/payments" element={<PaymentManagement />} />
         <Route path="/company/payment/:id" element={<PaymentDetail />} />
+
+        {/* <Route path="/company/create-task" element={<CreateTask />} />
+        <Route path="/company/bulk-upload" element={<BulkUploadTask />} /> */}
+        
+        {/* Refugee page */}
         <Route path="/user/tasks" element={<UserTaskList />} />
+
         <Route path="/user/my-tasks" element={<UserMyTasks />} />
         <Route path="/user/task/:id" element={<UserTaskDetail />} />
         <Route path="/user/task/image-classification/:id" element={<ImageClassificationTask />} />
