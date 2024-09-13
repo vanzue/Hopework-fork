@@ -100,6 +100,7 @@ function UserTaskList() {
       setTasks(data);
     } catch (error) {
       console.error('Error fetching task list:', error);
+      setError(error.message);
     }
   };
 

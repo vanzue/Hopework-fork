@@ -10,15 +10,7 @@ function UserMyTasks() {
 
   const [myTask, setMyTask] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  // const [myTasks, setMyTasks] = useState([]);
-
-  // Mock data - replace with actual data fetching
-  const myTasks = [
-    { id: 1, name: 'Image Classification', type: 'Image', difficulty: 'Easy', reward: 10, status: 'In Progress', progress: 30 },
-    { id: 2, name: 'Text Translation', type: 'Text', difficulty: 'Medium', reward: 20, status: 'Not Started', progress: 0 },
-    { id: 3, name: 'Data Entry', type: 'Data', difficulty: 'Easy', reward: 15, status: 'Completed', progress: 100 },
-  ];
+  const [error, setError] = useState(null); // Added error state
 
   useEffect(() => {
     const fetchTaskDetails = async () => {
@@ -32,6 +24,7 @@ function UserMyTasks() {
         console.log(data)
         setMyTask(data);
       } catch (err) {
+        setError(err.message); // Using setError
         // Mock data - replace with actual data fetching
         const mockTask = [
           { id: 1, title: 'Image Classification', type: 'image_labeling', status: "pending", difficulty: 'easy', reward_per_unit: 10, deadline: '2023-12-31', total_units: 100, completed_units: 10, description: 'Classify images by identifying the main objects or scenes within them.' },
@@ -40,7 +33,6 @@ function UserMyTasks() {
           { id: 4, title: 'Audio Transcription', type: 'content_moderation', status: "pending", difficulty: 'hard', reward_per_unit: 30, deadline: '2023-12-31', total_units: 100, completed_units: 41, description: 'Transcribe audio files into text, including speaker identification and timestamps.' },
         ];
         setMyTask(mockTask);
-        // setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -69,7 +61,7 @@ function UserMyTasks() {
   };
 
   const handleViewTaskOperation = (taskId) => {
-    // 根据任务ID导航到任务详情页面
+    // Navigate to task details page based on task ID
     navigate(`/user/task-operation/${taskId}`);
   };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container, Typography, CircularProgress, Button, Alert, Paper, IconButton
@@ -12,11 +12,7 @@ function UserTaskFeedback() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchTaskFeedback();
-  }, [id]);
-
-  const fetchTaskFeedback = async () => {
+  const fetchTaskFeedback = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`https://hopeworkapi.azurewebsites.net/api/task/${id}/feedback`);
@@ -30,8 +26,11 @@ function UserTaskFeedback() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
+  useEffect(() => {
+    fetchTaskFeedback();
+  }, [fetchTaskFeedback]);
 
   const handleViewReward= () => {
     // Logic to view reward

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container, Typography, Paper, Button, LinearProgress, Grid,
@@ -13,11 +13,7 @@ function UserTaskOperation() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchTaskDetails();
-  }, [fetchTaskDetails]); // 添加 fetchTaskDetails 作为依赖项
-
-  const fetchTaskDetails = async () => {
+  const fetchTaskDetails = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`https://hopeworkapi.azurewebsites.net/api/task/${id}/details`);
@@ -31,7 +27,11 @@ function UserTaskOperation() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchTaskDetails();
+  }, [fetchTaskDetails]);
 
   const handleSubmitTask = () => {
     fetch(`https://hopeworkapi.azurewebsites.net/api/task/${id}/submit`, {
