@@ -11,6 +11,7 @@ function UserMyTasks() {
   const [myTask, setMyTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // const [myTasks, setMyTasks] = useState([]);
 
   // Mock data - replace with actual data fetching
   const myTasks = [

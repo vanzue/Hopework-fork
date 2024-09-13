@@ -15,7 +15,7 @@ function UserTaskOperation() {
 
   useEffect(() => {
     fetchTaskDetails();
-  }, [id]);
+  }, [fetchTaskDetails]); // 添加 fetchTaskDetails 作为依赖项
 
   const fetchTaskDetails = async () => {
     try {
