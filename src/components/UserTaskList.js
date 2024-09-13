@@ -28,7 +28,73 @@ function UserTaskList() {
       }
       const data = await response.json();
       if (!Array.isArray(data)) {
-        setError(true);
+        console.error('API response is not an array:', data);
+        // Add mock task data
+        const mockTasks = [
+          {
+            id: 1,
+            title: 'Image Classification Task',
+            type: 'Image Processing',
+            difficulty: 'easy',
+            status: 'In Progress',
+            description: 'Classify and label a set of images',
+            reward_per_unit: 5,
+            total_units: 100,
+            completed_units: 0,
+            deadline: '2023-07-31'
+          },
+          {
+            id: 2,
+            title: 'Text Translation Task',
+            type: 'Language Processing',
+            difficulty: 'medium',
+            status: 'Not Started',
+            description: 'Translate English documents to Chinese',
+            reward_per_unit: 10,
+            total_units: 50,
+            completed_units: 0,
+            deadline: '2023-08-15'
+          },
+          {
+            id: 3,
+            title: 'Data Annotation Task',
+            type: 'Data Processing',
+            difficulty: 'hard',
+            status: 'In Progress',
+            description: 'Annotate training data for machine learning models',
+            reward_per_unit: 15,
+            total_units: 200,
+            completed_units: 50,
+            deadline: '2023-09-30'
+          },
+          {
+            id: 4,
+            title: 'Audio Transcription Task',
+            type: 'Speech Processing',
+            difficulty: 'medium',
+            status: 'Not Started',
+            description: 'Transcribe audio files into text',
+            reward_per_unit: 8,
+            total_units: 75,
+            completed_units: 0,
+            deadline: '2023-08-31'
+          },
+          {
+            id: 5,
+            title: 'Sentiment Analysis Task',
+            type: 'Natural Language Processing',
+            difficulty: 'hard',
+            status: 'In Progress',
+            description: 'Analyze sentiment of social media comments',
+            reward_per_unit: 12,
+            total_units: 150,
+            completed_units: 30,
+            deadline: '2023-09-15'
+          }
+        ];
+        setTasks(mockTasks);
+        // mock end
+        // setError(true);
         return;
       }
       setTasks(data);
@@ -37,12 +103,27 @@ function UserTaskList() {
     }
   };
 
-  const handleViewTask = (id) => {
-    navigate(`/user/task/${id}`);
+  const handleApplyTask = (id) => {
+    fetch(`https://hopeworkapi.azurewebsites.net/api/task/${id}/apply`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert('Application successful');
+      console.log('Task apply:', data);
+      navigate('/user/my-tasks');
+    })
+    .catch(error => {
+      console.error('Error apply task:', error);
+      alert('Failed to apply task. Please try again.');
+    });
   };
 
-  const handleApplyTask = () => {
-    navigate('/user/my-tasks');
+  const handleViewTask = (id) => {
+    navigate(`/user/task/${id}`);
   };
 
   const filteredTasks = tasks && tasks.length > 0 && tasks.filter(task => 
@@ -179,7 +260,7 @@ function UserTaskList() {
                   </Typography>
                   <Chip 
                     label={task.difficulty} 
-                    color={task.difficulty === 'Easy' ? 'success' : task.difficulty === 'Medium' ? 'warning' : 'error'}
+                    color={task.difficulty === 'easy' ? 'success' : task.difficulty === 'medium' ? 'warning' : 'error'}
                     size="small"
                   />
                 </Box>
@@ -207,7 +288,7 @@ function UserTaskList() {
                     mb: 1
                   }}
                 >
-                  Apply for Task
+                  Apply for this task
                 </Button>
               </Box>
             </Card>

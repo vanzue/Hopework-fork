@@ -11,7 +11,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 import { useNavigate } from 'react-router-dom';
 
-function TaskManagement() {
+function CompanyTaskManagement() {
   const navigate = useNavigate();
 
   const [openCreateTaskDialog, setOpenCreateTaskDialog] = useState(false);
@@ -245,7 +245,12 @@ function TaskManagement() {
                 <TableCell>
                   <Chip 
                     label={task.status} 
-                    color={task.status === 'Available' ? 'success' : 'warning'}
+                    color={
+                      task.status === 'completed' ? 'success' :
+                      task.status === 'in_progress' ? 'primary' :
+                      task.status === 'completed' ? 'default' :
+                      'warning'
+                    }
                     size="small"
                   />
                 </TableCell>
@@ -496,4 +501,4 @@ function TaskManagement() {
   );
 }
 
-export default TaskManagement;
+export default CompanyTaskManagement;

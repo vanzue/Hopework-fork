@@ -9,7 +9,7 @@ import {
 import LinkIcon from '@mui/icons-material/Link';
 import ListItemIcon from '@mui/material/ListItemIcon';
 
-function TaskDetail() {
+function CompanyTaskDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -190,16 +190,16 @@ function TaskDetail() {
   return (
     <Container maxWidth="md" sx={{ paddingTop: '3rem', paddingBottom: '3rem' }}>
       <IconButton 
-          onClick={handleBack} 
-          sx={{ 
-            position: 'absolute', 
-            top: '1rem', 
-            left: '1rem', 
-            fontSize: '1.5rem' 
-          }}
-        >
-          ←
-        </IconButton>
+        onClick={handleBack} 
+        sx={{ 
+          position: 'absolute', 
+          top: '1rem', 
+          left: '1rem', 
+          fontSize: '1.5rem' 
+        }}
+      >
+        ←
+      </IconButton>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#1976d2', marginBottom: '1.5rem' }}>
         Task Details
       </Typography>
@@ -370,4 +370,4 @@ function TaskDetail() {
   );
 }
 
-export default TaskDetail;
+export default CompanyTaskDetail;
