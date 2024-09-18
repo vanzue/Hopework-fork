@@ -329,14 +329,10 @@ function UserTaskList() {
                   />
                 </Box>
                 <Typography variant="body2" component="p" sx={{ mb: 0.5 }}>
-                  Reward: ${task.reward_per_unit}
-                </Typography>
-                <Typography variant="body2" component="p" sx={{ mb: 0.5 }}>
                   Status: {task.status}
-                  {/* {
-                    task.completed_units === 0 ? 'Not Started' :
-                    task.completed_units === task.total_units ? 'Completed' : 'In Progress'
-                  } */}
+                </Typography>
+                <Typography variant="h5" component="p" sx={{ mt: 3, color: 'success.main', fontWeight: 'bold', textAlign: 'center' }}>
+                  Reward: ${task.reward_per_unit}
                 </Typography>
               </CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'center', p: 1 }}>
