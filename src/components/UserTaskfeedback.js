@@ -36,7 +36,7 @@ function UserTaskFeedback() {
         actualReward: 95
       };
       setFeedback(mockFeedback);
-      // setError(err.message);
+      setError(false);
     } finally {
       setLoading(false);
     }

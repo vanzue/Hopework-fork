@@ -115,14 +115,14 @@ function UserTaskList() {
       if (!Array.isArray(data)) {
         console.error('API response is not an array:', data);
         setTasks(mockTasks);
-        // setError(true);
+        setError(false);
         return;
       }
       setTasks(data);
     } catch (error) {
       console.error('Error fetching task list:', error);
       setTasks(mockTasks);
-      // setError(error.message);
+      setError(false);
     } finally {
       setLoading(false);
     }

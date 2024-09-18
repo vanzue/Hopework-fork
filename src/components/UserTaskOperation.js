@@ -42,7 +42,7 @@ function UserTaskOperation() {
         deadline: '2023-07-31'
       };
       setTask(mockTask);
-      // setError(err.message);
+      setError(false);
     } finally {
       setLoading(false);
     }

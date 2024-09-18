@@ -39,7 +39,7 @@ function UserWithdrawalStatus() {
       ];
       setWithdrawals(mockData);
     } catch (err) {
-      // setError(err.message);
+      setError(false);
       // This should be an actual API call
       const mockData = [
         { id: 1, status: 'Processing', amount: 100, date: '2023-05-15', method: 'PayPal' },

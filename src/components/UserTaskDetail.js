@@ -107,7 +107,7 @@ function UserTaskDetail() {
         setTask(data);
       } catch (err) {
         setTask(mockTask);
-        // setError(err.message);
+        setError(false);
       } finally {
         setLoading(false);
       }
