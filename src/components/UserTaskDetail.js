@@ -95,7 +95,7 @@ function UserTaskDetail() {
         setLoading(true);
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
-        const response = await fetch('https://hopeworkapi.azurewebsites.net/api/task/${id}/details', {
+        const response = await fetch(`https://hopeworkapi.azurewebsites.net/api/task/${id}/details`, {
           signal: controller.signal
         });
         clearTimeout(timeoutId);

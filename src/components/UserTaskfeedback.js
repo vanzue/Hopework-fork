@@ -18,7 +18,7 @@ function UserTaskFeedback() {
       setLoading(true);
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000);
-      const response = await fetch('https://hopeworkapi.azurewebsites.net/api/task/${id}/feedback', {
+      const response = await fetch(`https://hopeworkapi.azurewebsites.net/api/task/${id}/feedback`, {
         signal: controller.signal
       });
       clearTimeout(timeoutId);
@@ -40,7 +40,7 @@ function UserTaskFeedback() {
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, []);
 
   useEffect(() => {
     fetchTaskFeedback();
