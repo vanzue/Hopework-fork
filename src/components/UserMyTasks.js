@@ -16,15 +16,21 @@ function UserMyTasks() {
     const fetchTaskDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://hopeworkapi.azurewebsites.net/api/task/mytasks');
-        if (!response.ok) {
-          throw new Error('Failed to fetch task list');
-        }
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const response = await fetch('https://hopeworkapi.azurewebsites.net/api/task/mytasks', {
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        // if (!response.ok) {
+        //   throw new Error('Failed to fetch task list');
+        // }
         const data = await response.json();
         console.log(data)
         setMyTask(data);
       } catch (err) {
-        setError(err.message); // Using setError
+        // setError(err.message); // Using setError
         // Mock data - replace with actual data fetching
         const mockTask = [
           { id: 1, title: 'Image Classification', type: 'image_labeling', status: "pending", difficulty: 'easy', reward_per_unit: 10, deadline: '2023-12-31', total_units: 100, completed_units: 10, description: 'Classify images by identifying the main objects or scenes within them.' },
@@ -42,21 +48,27 @@ function UserMyTasks() {
   }, []);
 
   const handleSubmitTask = (id) => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setTimeout(() => {
+      controller.abort();
+    }, 2000);
     fetch(`https://hopeworkapi.azurewebsites.net/api/task/${id}/submit`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      signal
     })
     .then(response => response.json())
-    .then(data => {
+    .catch(error => {
+      console.error('Error apply task:', error);
+      // alert('Failed to apply task. Please try again.');
+    })
+    .finally(data => {
       alert('Submit successful');
       console.log('Task Submit:', data);
       navigate(`/user/task-feedback/${id}`);
-    })
-    .catch(error => {
-      console.error('Error apply task:', error);
-      alert('Failed to apply task. Please try again.');
     });
   };
 
