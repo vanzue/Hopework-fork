@@ -16,7 +16,7 @@ function UserTaskList() {
 
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); // 添加这行
 
   useEffect(() => {
     fetchTasks();
@@ -122,7 +122,7 @@ function UserTaskList() {
     } catch (error) {
       console.error('Error fetching task list:', error);
       setTasks(mockTasks);
-      // setError(error.message);
+      setError(error.message); // 现在可以使用 setError
     } finally {
       setLoading(false);
     }

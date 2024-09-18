@@ -9,7 +9,7 @@ function UserWithdrawalStatus() {
   const navigate = useNavigate();
   const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error] = useState(null);
 
   useEffect(() => {
     // Simulate fetching data from API

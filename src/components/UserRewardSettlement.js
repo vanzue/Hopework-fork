@@ -43,6 +43,8 @@ function UserRewardSettlement() {
       setTotalIncome(mockData.reduce((sum, item) => sum + item.amount, 0));
       setAvailableBalance(350); // Assume available balance
     } catch (err) {
+      setError(err.message);
+      console.error('Error fetching reward settlement:', err);
       // This should be an actual API call
       const mockData = [
         { id: 1, taskName: 'Task 1', amount: 100, date: '2023-05-01' },
@@ -52,7 +54,6 @@ function UserRewardSettlement() {
       setIncomeHistory(mockData);
       setTotalIncome(mockData.reduce((sum, item) => sum + item.amount, 0));
       setAvailableBalance(350); // Assume available balance
-      // setError(err.message);
     } finally {
       setLoading(false);
     }

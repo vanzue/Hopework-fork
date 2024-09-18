@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 
 function UserTaskFeedback() {
-  const { id } = useParams();
+  const { id } = useParams(); // 重新添加 id
   const navigate = useNavigate();
 
   const [feedback, setFeedback] = useState('');
@@ -18,7 +18,7 @@ function UserTaskFeedback() {
       setLoading(true);
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000);
-      const response = await fetch('https://hopeworkapi.azurewebsites.net/api/task/${id}/feedback', {
+      const response = await fetch(`https://hopeworkapi.azurewebsites.net/api/task/${id}/feedback`, {
         signal: controller.signal
       });
       clearTimeout(timeoutId);
@@ -28,6 +28,8 @@ function UserTaskFeedback() {
       const feedback = await response.json();
       setFeedback(feedback);
     } catch (err) {
+      setError(err.message);
+      console.error('Error fetching task feedback:', err);
       // Mock feedback data
       const mockFeedback = {
         result: 'Approved',
@@ -36,11 +38,10 @@ function UserTaskFeedback() {
         actualReward: 95
       };
       setFeedback(mockFeedback);
-      // setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id]); // 添加 id 作为依赖项
 
   useEffect(() => {
     fetchTaskFeedback();

@@ -30,7 +30,8 @@ function UserMyTasks() {
         console.log(data)
         setMyTask(data);
       } catch (err) {
-        // setError(err.message); // Using setError
+        setError(err.message);
+        console.error('Error fetching tasks:', err);
         // Mock data - replace with actual data fetching
         const mockTask = [
           { id: 1, title: 'Image Classification', type: 'image_labeling', status: "pending", difficulty: 'easy', reward_per_unit: 10, deadline: '2023-12-31', total_units: 100, completed_units: 10, description: 'Classify images by identifying the main objects or scenes within them.' },
