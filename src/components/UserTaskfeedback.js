@@ -40,7 +40,7 @@ function UserTaskFeedback() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     fetchTaskFeedback();
