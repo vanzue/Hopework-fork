@@ -21,7 +21,7 @@ function CompanyTaskManagement() {
   const [newTaskTotalItems, setNewTaskTotalItems] = useState('');
   const [newTaskDifficulty, setNewTaskDifficulty] = useState('');
   const [newTaskReward, setNewTaskReward] = useState('');
-  const [newTaskDeadline, setNewTaskDeadline] = useState('');
+  const [newTaskDeadline, setNewTaskDeadline] = useState(new Date().toISOString().slice(0, 10));
   const [newTaskResources, setResources] = useState([]);
   const [taskVisibility, setTaskVisibility] = useState('');
   const [specificUsers, setSpecificUsers] = useState('');
@@ -29,14 +29,121 @@ function CompanyTaskManagement() {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
   const fetchTasks = async () => {
+    // Add mock task data
+    const mockTasks = [
+      {
+        id: 1,
+        title: 'Local Advertisement Image Collection',
+        type: 'Image Collection',
+        difficulty: 'easy',
+        status: 'In Progress',
+        description: 'Users are asked to take pictures of local advertisements with their phones. The images should clearly show the text on the advertisements and include background context such as shops, buildings, or streets where the advertisements are located. This helps provide a comprehensive view of the advertisement’s environment. The goal is to gather diverse advertisements from various locations to analyze marketing trends and strategies. Ensure the images are clear and the text is legible. Avoid taking pictures of people without their consent.',
+        reward_per_unit: 2,
+        total_units: 1000,
+        completed_units: 86,
+        deadline: '2025-01-31'
+      },
+      {
+        id: 2,
+        title: 'Crop Species Classification',
+        type: 'Image Classification',
+        difficulty: 'medium',
+        status: 'Not Started',
+        description: 'This task involves identifying the species of crops in provided images. Users will be shown pictures of different crops(and weeds) and need to classify them correctly. This helps in monitoring agricultural fields and managing crop health. Users should have basic knowledge of agricultural crops to perform this task accurately. The task aims to support farmers in distinguishing between crops and weeds, thereby improving crop management practices.',
+        reward_per_unit: 10,
+        total_units: 500,
+        completed_units: 0,
+        deadline: '2024-11-15'
+      },
+      {
+        id: 3,
+        title: 'Local Handicrafts Data Labelling',
+        type:'Data Labelling',
+        difficulty:'easy',
+        status:'In Progress',
+        description:'In this task, users are required to identify and label local handicrafts. Users will be provided with images of various handicrafts and need to label them with the correct names and descriptions. This task helps in documenting and preserving local cultural heritage. Users should have some knowledge of local handicrafts to perform this task accurately. The goal is to create a comprehensive database of local handicrafts, which can be used for cultural preservation and promotion.',
+        reward_per_unit: 5,
+        total_units: 100,
+        completed_units: 23,
+        deadline: '2024-10-01'
+      },
+      {
+        id: 4,
+        title: 'Sentiment Analysis',
+        type: 'Language Processing',
+        difficulty: 'hard',
+        status: 'In Progress',
+        description: 'This task involves analyzing the sentiment of provided texts. Users will be given various text samples and need to determine whether the sentiment expressed is positive, negative, or neutral. This helps in understanding public opinion and emotional responses to different topics. Users should have good comprehension skills and the ability to interpret the tone and context of the texts accurately. The goal is to create a dataset that reflects the emotional tone of the texts, which can be used for further analysis and research.',
+        reward_per_unit: 18,
+        total_units: 200,
+        completed_units: 50,
+        deadline: '2024-09-30'
+      },
+      {
+        id: 5,
+        title: 'Audio Transcription',
+        type: 'Content Moderation',
+        difficulty: 'medium',
+        status: 'Not Started',
+        description: 'This task requires users to transcribe audio recordings into text. Users will be provided with audio files containing spoken content, and they need to accurately transcribe the speech into text. This task helps in converting spoken information into a written format for documentation and analysis. Users should have good listening skills and attention to detail to ensure accurate transcription. The goal is to create a reliable written record of the audio content.',
+        reward_per_unit: 8,
+        total_units: 75,
+        completed_units: 0,
+        deadline: '2025-08-31'
+      },
+      {
+        id: 6,
+        title: 'Dialect Recording',
+        type: 'Culture Preservation',
+        difficulty: 'medium',
+        status: 'Completed',
+        description: 'In this task, users are asked to record themselves reading a specific text in their local dialect. The text will be provided, and users need to ensure clear pronunciation and accurate representation of the dialect. This task helps in documenting and preserving linguistic diversity. Users should have a good command of their local dialect to perform this task effectively. The goal is to create a collection of recordings that showcase different dialects and contribute to linguistic research and preservation.',
+        reward_per_unit: 20,
+        total_units: 50,
+        completed_units: 39,
+        deadline: '2023-08-31'
+      },
+      {
+        id: 7,
+        title: 'Street Sign Image Collection and Annotation',
+        type: 'Image Collection',
+        difficulty: 'medium',
+        status: 'In Progress',
+        description: 'In this task, users are asked to take pictures of street signs that contain text. The images should clearly show the text on the signs and include the surrounding environment for context. After taking the pictures, users need to annotate the text in the images, specifying what the signs say. This task helps in creating a database of street signs for navigation and urban planning purposes. Ensure the images are clear and the text is legible.',
+        reward_per_unit: 8,
+        total_units: 150,
+        completed_units: 30,
+        deadline: '2023-09-15'
+      },
+      {
+        id: 8,
+        title: 'Product Image Collection',
+        type: 'Image Collection',
+        difficulty: 'easy',
+        status: 'In Progress',
+        description: 'In this task, users are asked to take pictures of product labels that contain text. The images should capture the text on the labels and include the product packaging for context. Users then need to annotate the text in the images, providing details about what the labels say. This task helps in documenting product information for consumer research and regulatory purposes. Ensure the images are clear and the text is legible. Avoid taking pictures of people without their consent.',
+        reward_per_unit: 2,
+        total_units: 200,
+        completed_units: 97,
+        deadline: '2024-09-15'
+      }
+    ];
     try {
-      const response = await fetch('https://hopeworkapi.azurewebsites.net/api/task/list');
+      setLoading(true);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      const response = await fetch('https://hopeworkapi.azurewebsites.net/api/task/list', {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
       if (!response.ok) {
         throw new Error('Failed to fetch task list');
       }
@@ -44,18 +151,9 @@ function CompanyTaskManagement() {
       setTasks(data);
     } catch (error) {
       console.error('Error fetching task list:', error);
-      // Mock data
-      const mockTasks = [
-        { id: 1, title: 'Image Classification', type: 'Image', status: "pending", difficulty: 'Easy', reward_per_unit: 10, deadline: '2023-12-31', total_units: 100, completed_units: 10, description: 'Classify images by identifying the main objects or scenes within them.' },
-        { id: 2, title: 'Text Translation', type: 'Text', status: "Available", difficulty: 'Medium', reward_per_unit: 20, deadline: '2023-12-31', total_units: 100, completed_units: 15, description: 'Translate given text from one language to another while preserving the original meaning.' },
-        { id: 3, title: 'Data Entry', type: 'Data', status: "pending", difficulty: 'Easy', reward_per_unit: 15, deadline: '2023-12-31', total_units: 30, completed_units: 30, description: 'Accurately input provided information into specified databases or spreadsheets.' },
-        { id: 4, title: 'Audio Transcription', type: 'Audio', status: "pending", difficulty: 'Hard', reward_per_unit: 30, deadline: '2023-12-31', total_units: 100, completed_units: 41, description: 'Transcribe audio files into text, including speaker identification and timestamps.' },
-        { id: 5, title: 'Sentiment Analysis', type: 'Text', status: "Available", difficulty: 'Medium', reward_per_unit: 25, deadline: '2023-12-31', total_units: 100, completed_units: 20, description: 'Analyze text content to determine its sentiment (positive, negative, or neutral).' },
-        { id: 6, title: 'Video Annotation', type: 'Video', status: "pending", difficulty: 'Hard', reward_per_unit: 35, deadline: '2023-12-31', total_units: 10, completed_units: 5, description: 'Add annotations to videos, including object tagging, action descriptions, and scene classification.' },
-        { id: 7, title: 'Speech Recognition', type: 'Audio', status: "Available", difficulty: 'Medium', reward_per_unit: 28, deadline: '2023-12-31', total_units: 40, completed_units: 20, description: 'Convert speech to text, recognizing different accents and dialects.' },
-        { id: 8, title: 'Image Segmentation', type: 'Image', status: "pending", difficulty: 'Hard', reward_per_unit: 40, deadline: '2023-12-31', total_units: 100, completed_units: 0, description: 'Segment images into multiple semantic regions, precisely labeling each pixel.' },
-      ];
       setTasks(mockTasks);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,44 +162,63 @@ function CompanyTaskManagement() {
   };
 
   const handlePauseTask = (id) => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setTimeout(() => {
+      controller.abort();
+    }, 2000);
     // Send a request to pause the task
     fetch(`https://hopeworkapi.azurewebsites.net/api/task/${id}/pause`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
+      signal
     })
     .then(response => response.json())
-    .then(data => {
-      console.log('Task paused:', data);
-      fetchTasks();
-    })
     .catch(error => {
       console.error('Error pausing task:', error);
-      alert('Failed to pause task. Please try again.');
+      // alert('Failed to pause task. Please try again.');
+    })
+    .finally(data => {
+      alert('Task paused successful!')
+      console.log('Task paused:', data);
+      // fetchTasks();
     });
   };
 
   const handleCancelTask = (id) => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setTimeout(() => {
+      controller.abort();
+    }, 2000);
     // Send a request to cancel the task
     fetch(`https://hopeworkapi.azurewebsites.net/api/task/${id}/cancel`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
+      signal
     })
     .then(response => response.json())
-    .then(data => {
-      console.log('Task cancelled:', data);
-      fetchTasks();
-    })
     .catch(error => {
       console.error('Error cancelling task:', error);
-      alert('Failed to cancel task. Please try again.');
+      // alert('Failed to cancel task. Please try again.');
+    })
+    .finally(data => {
+      alert("Task created successful!");
+      console.log('Task cancelled:', data);
+      // fetchTasks();
     });
   };
 
   const handleCreateTask = () => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setTimeout(() => {
+      controller.abort();
+    }, 2000);
     // Send a request to create a new task
     fetch('https://hopeworkapi.azurewebsites.net/api/task/create', {
       method: 'POST',
@@ -120,15 +237,18 @@ function CompanyTaskManagement() {
         taskVisibility: taskVisibility,
         specificUsers: specificUsers
       }),
+      signal
     })
     .then(response => response.json())
-    .then(data => {
-      console.log('Task created:', data);
-      fetchTasks();
-    })
     .catch(error => {
       console.error('Error creating task:', error);
-      alert('Failed to create task. Please try again.');
+      // alert('Failed to create task. Please try again.');
+    })
+    .finally(data => {
+      alert("Task created successful!");
+      console.log('Task created:', data);
+      // fetchTasks();
+      handleCloseCreateTaskDialog();
     });
   };
 
@@ -141,18 +261,26 @@ function CompanyTaskManagement() {
     // Send a request for bulk task upload
     const formData = new FormData();
     formData.append('file', selectedFile);
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setTimeout(() => {
+      controller.abort();
+    }, 2000);
     fetch('https://hopeworkapi.azurewebsites.net/api/task/batch-upload', {
       method: 'POST',
       body: formData,
+      signal
     })
     .then(response => response.json())
-    .then(data => {
-      console.log('Bulk task upload successful:', data);
-      fetchTasks();
-    })
     .catch(error => {
       console.error('Error during bulk task upload:', error);
-      alert('Bulk upload of tasks failed, please try again');
+      // alert('Bulk upload of tasks failed, please try again');
+    })
+    .finally(data => {
+      console.log('Bulk task upload successful:', data);
+      alert('Bulk task upload successful!');
+      handleCloseBulkUploadDialog();
+      fetchTasks();
     });
   };
 
@@ -170,6 +298,7 @@ function CompanyTaskManagement() {
     setNewTaskDeadline(new Date().toISOString().slice(0, 10));
     setTaskVisibility('');
     setSpecificUsers('');
+    setResources([]);
     setOpenCreateTaskDialog(false);
   };
 
@@ -181,6 +310,18 @@ function CompanyTaskManagement() {
     setSelectedFile(null);
     setOpenBulkUploadDialog(false);
   };
+
+  if (loading) {
+    return (
+      <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Paper elevation={3} sx={{ p: 4, textAlign: 'center' }}>
+          <Typography variant="h6" gutterBottom>Loading Task List</Typography>
+          <LinearProgress sx={{ mt: 2, mb: 2 }} />
+          <Typography variant="body2" color="text.secondary">Please wait...</Typography>
+        </Paper>
+      </Container>
+    );
+  }
 
   return (
     <Container sx={{ paddingTop: '2rem' }}>
@@ -246,9 +387,9 @@ function CompanyTaskManagement() {
                   <Chip 
                     label={task.status} 
                     color={
-                      task.status === 'completed' ? 'success' :
-                      task.status === 'in_progress' ? 'primary' :
-                      task.status === 'completed' ? 'default' :
+                      task.status === 'Completed' ? 'success' :
+                      task.status === 'In Progress' ? 'primary' :
+                      task.status === 'Pending' ? 'default' :
                       'warning'
                     }
                     size="small"

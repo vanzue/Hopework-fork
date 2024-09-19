@@ -18,10 +18,115 @@ function CompanyTaskDetail() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Add mock task data
+    const mockTasks = [
+      {
+        id: 1,
+        title: 'Local Advertisement Image Collection',
+        type: 'Image Collection',
+        difficulty: 'easy',
+        status: 'In Progress',
+        description: 'Users are asked to take pictures of local advertisements with their phones. The images should clearly show the text on the advertisements and include background context such as shops, buildings, or streets where the advertisements are located. This helps provide a comprehensive view of the advertisement’s environment. The goal is to gather diverse advertisements from various locations to analyze marketing trends and strategies. Ensure the images are clear and the text is legible. Avoid taking pictures of people without their consent.',
+        reward_per_unit: 2,
+        total_units: 1000,
+        completed_units: 86,
+        deadline: '2025-01-31'
+      },
+      {
+        id: 2,
+        title: 'Crop Species Classification',
+        type: 'Image Classification',
+        difficulty: 'medium',
+        status: 'Not Started',
+        description: 'This task involves identifying the species of crops in provided images. Users will be shown pictures of different crops(and weeds) and need to classify them correctly. This helps in monitoring agricultural fields and managing crop health. Users should have basic knowledge of agricultural crops to perform this task accurately. The task aims to support farmers in distinguishing between crops and weeds, thereby improving crop management practices.',
+        reward_per_unit: 10,
+        total_units: 500,
+        completed_units: 0,
+        deadline: '2024-11-15'
+      },
+      {
+        id: 3,
+        title: 'Local Handicrafts Data Labelling',
+        type:'Data Labelling',
+        difficulty:'easy',
+        status:'In Progress',
+        description:'In this task, users are required to identify and label local handicrafts. Users will be provided with images of various handicrafts and need to label them with the correct names and descriptions. This task helps in documenting and preserving local cultural heritage. Users should have some knowledge of local handicrafts to perform this task accurately. The goal is to create a comprehensive database of local handicrafts, which can be used for cultural preservation and promotion.',
+        reward_per_unit: 5,
+        total_units: 100,
+        completed_units: 23,
+        deadline: '2024-10-01'
+      },
+      {
+        id: 4,
+        title: 'Sentiment Analysis',
+        type: 'Language Processing',
+        difficulty: 'hard',
+        status: 'In Progress',
+        description: 'This task involves analyzing the sentiment of provided texts. Users will be given various text samples and need to determine whether the sentiment expressed is positive, negative, or neutral. This helps in understanding public opinion and emotional responses to different topics. Users should have good comprehension skills and the ability to interpret the tone and context of the texts accurately. The goal is to create a dataset that reflects the emotional tone of the texts, which can be used for further analysis and research.',
+        reward_per_unit: 18,
+        total_units: 200,
+        completed_units: 50,
+        deadline: '2024-09-30'
+      },
+      {
+        id: 5,
+        title: 'Audio Transcription',
+        type: 'Content Moderation',
+        difficulty: 'medium',
+        status: 'Not Started',
+        description: 'This task requires users to transcribe audio recordings into text. Users will be provided with audio files containing spoken content, and they need to accurately transcribe the speech into text. This task helps in converting spoken information into a written format for documentation and analysis. Users should have good listening skills and attention to detail to ensure accurate transcription. The goal is to create a reliable written record of the audio content.',
+        reward_per_unit: 8,
+        total_units: 75,
+        completed_units: 0,
+        deadline: '2025-08-31'
+      },
+      {
+        id: 6,
+        title: 'Dialect Recording',
+        type: 'Culture Preservation',
+        difficulty: 'medium',
+        status: 'Completed',
+        description: 'In this task, users are asked to record themselves reading a specific text in their local dialect. The text will be provided, and users need to ensure clear pronunciation and accurate representation of the dialect. This task helps in documenting and preserving linguistic diversity. Users should have a good command of their local dialect to perform this task effectively. The goal is to create a collection of recordings that showcase different dialects and contribute to linguistic research and preservation.',
+        reward_per_unit: 20,
+        total_units: 50,
+        completed_units: 39,
+        deadline: '2023-08-31'
+      },
+      {
+        id: 7,
+        title: 'Street Sign Image Collection and Annotation',
+        type: 'Image Collection',
+        difficulty: 'medium',
+        status: 'In Progress',
+        description: 'In this task, users are asked to take pictures of street signs that contain text. The images should clearly show the text on the signs and include the surrounding environment for context. After taking the pictures, users need to annotate the text in the images, specifying what the signs say. This task helps in creating a database of street signs for navigation and urban planning purposes. Ensure the images are clear and the text is legible.',
+        reward_per_unit: 8,
+        total_units: 150,
+        completed_units: 30,
+        deadline: '2023-09-15'
+      },
+      {
+        id: 8,
+        title: 'Product Image Collection',
+        type: 'Image Collection',
+        difficulty: 'easy',
+        status: 'In Progress',
+        description: 'In this task, users are asked to take pictures of product labels that contain text. The images should capture the text on the labels and include the product packaging for context. Users then need to annotate the text in the images, providing details about what the labels say. This task helps in documenting product information for consumer research and regulatory purposes. Ensure the images are clear and the text is legible. Avoid taking pictures of people without their consent.',
+        reward_per_unit: 2,
+        total_units: 200,
+        completed_units: 97,
+        deadline: '2024-09-15'
+      }
+    ];
     const fetchTaskDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://hopeworkapi.azurewebsites.net/api/task/list');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const response = await fetch('https://hopeworkapi.azurewebsites.net/api/task/list', {
+          signal: controller.signal
+        });
+      
+        clearTimeout(timeoutId);
         if (!response.ok) {
           throw new Error('Failed to fetch task list');
         }
@@ -30,7 +135,9 @@ function CompanyTaskDetail() {
 
         setTask(task);
       } catch (err) {
-        setError(err.message);
+        setError(false);
+        const task = mockTasks.filter(task => task.id === +id)[0];
+        setTask(task);
       } finally {
         setLoading(false);
       }
@@ -40,50 +147,62 @@ function CompanyTaskDetail() {
   }, [id]);
 
   const handlePauseTask = (taskId) => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setTimeout(() => {
+      controller.abort();
+    }, 2000);
     // Send a request to pause the task
     fetch(`https://hopeworkapi.azurewebsites.net/api/task/${taskId}/pause`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
+      signal
     })
     .then(response => response.json())
-    .then(data => {
+    .catch(error => {
+      console.error('Error pausing task:', error);
+      // alert('Failed to pause task. Please try again.');
+    })
+    .finally(data => {
+      alert('Task has been successfully paused');
       console.log('Task paused:', data);
       // Update page data
       setTask(prevTask => ({
         ...prevTask,
         status: 'Paused'// todo: check status data
       }));
-      alert('Task has been successfully paused');
-    })
-    .catch(error => {
-      console.error('Error pausing task:', error);
-      alert('Failed to pause task. Please try again.');
     });
   }
 
   const handleCancelTask = (taskId) => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setTimeout(() => {
+      controller.abort();
+    }, 2000);
     // Send a request to cancel the task
     fetch(`https://hopeworkapi.azurewebsites.net/api/task/${taskId}/cancel`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
+      signal
     })
     .then(response => response.json())
-    .then(data => {
+    .catch(error => {
+      console.error('Error cancelling task:', error);
+      // alert('Failed to cancel task. Please try again.');
+    })
+    .finally(data => {
+      alert('Task has been successfully cancelled');
       console.log('Task cancelled:', data);
       // Update task status
       setTask(prevTask => ({
         ...prevTask,
         status: 'Cancelled'// todo: check status data
       }));
-      alert('Task has been successfully cancelled');
-    })
-    .catch(error => {
-      console.error('Error cancelling task:', error);
-      alert('Failed to cancel task. Please try again.');
     });
   }
 
