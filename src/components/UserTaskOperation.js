@@ -268,7 +268,7 @@ function UserTaskOperation() {
         </Typography>
         {task && task.type === 'Image Classification' ? (
           <Typography variant="body1" paragraph>
-            This is an image classification task. Please click the "Categorize" button below to start the classification operation.
+            This is an image classification task. Please click the button below to start the classification operation.
             <Box sx={{ position: 'relative' }}>
               <Container maxWidth="md">
                 <Typography variant="h4" gutterBottom align="center">
