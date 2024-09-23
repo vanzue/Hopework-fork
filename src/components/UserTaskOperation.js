@@ -269,13 +269,16 @@ function UserTaskOperation() {
         {task && task.type === 'Image Classification' ? (
           <Typography variant="body1" paragraph>
             This is an image classification task. Please click the "Categorize" button below to start the classification operation.
-            <Box sx={{ position: 'relative', paddingTop: '2rem' }}>
+            <Box sx={{ position: 'relative' }}>
               <Container maxWidth="md">
                 <Typography variant="h4" gutterBottom align="center">
                   {task.name}
                 </Typography>
-                <Paper elevation={3} sx={{ padding: '2rem', marginTop: '2rem' }}>
-                  <Box sx={{ width: '100%', height: '400px', backgroundColor: '#f0f0f0', marginBottom: '2rem'}}>
+                <Paper elevation={3} sx={{ padding: { xs: '1rem', sm: '2rem' }, marginTop: { xs: '1rem', sm: '2rem' } }}>
+                  <Typography variant="body1" align="left" sx={{ padding: '0' }}>
+                    Image {currentImageIndex + 1}
+                  </Typography>
+                  <Box sx={{ width: '100%', height: { xs: '230px', sm: '400px' }, backgroundColor: '#f0f0f0', marginBottom: '2rem'}}>
                     <img
                       src={mockImageUrl[currentImageIndex].url}
                       alt={`Classification ${currentImageIndex + 1}`}
@@ -285,9 +288,6 @@ function UserTaskOperation() {
                         objectFit: 'cover'
                       }}
                     />
-                    <Typography variant="body1" align="left" sx={{ paddingTop: '0' }}>
-                      Image {currentImageIndex + 1}
-                    </Typography>
                   </Box>
                   <Grid container spacing={2} justifyContent="center">
                     {mockImageUrl[currentImageIndex].labels.map((label, index) => (
@@ -302,7 +302,7 @@ function UserTaskOperation() {
                     ))}
                   </Grid>
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem' }}>
-                    <Button variant="contained" color="primary" onClick={handleNextImage}>
+                    <Button variant="contained" color="secondary" onClick={handleNextImage}>
                       Next Image
                     </Button>
                   </Box>
