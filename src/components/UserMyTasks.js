@@ -14,6 +14,70 @@ function UserMyTasks() {
 
   useEffect(() => {
     const fetchTaskDetails = async () => {
+      // Add mock task data
+      const mockTasks = [
+        {
+          id: 1,
+          title: 'Local Advertisement Image Collection',
+          type: 'Image Collection',
+          difficulty: 'easy',
+          status: 'In Progress',
+          description: 'Users are asked to take pictures of local advertisements with their phones. The images should clearly show the text on the advertisements and include background context such as shops, buildings, or streets where the advertisements are located. This helps provide a comprehensive view of the advertisement’s environment. The goal is to gather diverse advertisements from various locations to analyze marketing trends and strategies. Ensure the images are clear and the text is legible. Avoid taking pictures of people without their consent.',
+          reward_per_unit: 2,
+          total_units: 1000,
+          completed_units: 86,
+          deadline: '2025-01-31'
+        },
+        {
+          id: 2,
+          title: 'Crop Species Classification',
+          type: 'Image Classification',
+          difficulty: 'medium',
+          status: 'Not Started',
+          description: 'This task involves identifying the species of crops in provided images. Users will be shown pictures of different crops(and weeds) and need to classify them correctly. This helps in monitoring agricultural fields and managing crop health. Users should have basic knowledge of agricultural crops to perform this task accurately. The task aims to support farmers in distinguishing between crops and weeds, thereby improving crop management practices.',
+          reward_per_unit: 10,
+          total_units: 500,
+          completed_units: 0,
+          deadline: '2024-11-15'
+        },
+        {
+          id: 3,
+          title: 'Local Handicrafts Data Labelling',
+          type:'Data Labelling',
+          difficulty:'easy',
+          status:'In Progress',
+          description:'In this task, users are required to identify and label local handicrafts. Users will be provided with images of various handicrafts and need to label them with the correct names and descriptions. This task helps in documenting and preserving local cultural heritage. Users should have some knowledge of local handicrafts to perform this task accurately. The goal is to create a comprehensive database of local handicrafts, which can be used for cultural preservation and promotion.',
+          reward_per_unit: 5,
+          total_units: 100,
+          completed_units: 23,
+          deadline: '2024-10-01'
+        },
+        {
+          id: 4,
+          title: 'Sentiment Analysis',
+          type: 'Language Processing',
+          difficulty: 'hard',
+          status: 'In Progress',
+          description: 'This task involves analyzing the sentiment of provided texts. Users will be given various text samples and need to determine whether the sentiment expressed is positive, negative, or neutral. This helps in understanding public opinion and emotional responses to different topics. Users should have good comprehension skills and the ability to interpret the tone and context of the texts accurately. The goal is to create a dataset that reflects the emotional tone of the texts, which can be used for further analysis and research.',
+          reward_per_unit: 18,
+          total_units: 200,
+          completed_units: 50,
+          deadline: '2024-09-30'
+        },
+        {
+          id: 5,
+          title: 'Audio Transcription',
+          type: 'Content Moderation',
+          difficulty: 'medium',
+          status: 'Not Started',
+          description: 'This task requires users to transcribe audio recordings into text. Users will be provided with audio files containing spoken content, and they need to accurately transcribe the speech into text. This task helps in converting spoken information into a written format for documentation and analysis. Users should have good listening skills and attention to detail to ensure accurate transcription. The goal is to create a reliable written record of the audio content.',
+          reward_per_unit: 8,
+          total_units: 75,
+          completed_units: 0,
+          deadline: '2025-08-31'
+        }
+      ];
+      // mock end
       try {
         setLoading(true);
         const controller = new AbortController();
@@ -31,14 +95,7 @@ function UserMyTasks() {
         setMyTask(data);
       } catch (err) {
         setError(false); // Using setError
-        // Mock data - replace with actual data fetching
-        const mockTask = [
-          { id: 1, title: 'Image Classification', type: 'image_labeling', status: "pending", difficulty: 'easy', reward_per_unit: 10, deadline: '2023-12-31', total_units: 100, completed_units: 10, description: 'Classify images by identifying the main objects or scenes within them.' },
-          { id: 2, title: 'Text Translation', type: 'image_labeling', status: "Available", difficulty: 'medium', reward_per_unit: 20, deadline: '2023-12-31', total_units: 100, completed_units: 15, description: 'Translate given text from one language to another while preserving the original meaning.' },
-          { id: 3, title: 'Data Entry', type: 'data_entry', status: "completed", difficulty: 'easy', reward_per_unit: 15, deadline: '2023-12-31', total_units: 30, completed_units: 30, description: 'Accurately input provided information into specified databases or spreadsheets.' },
-          { id: 4, title: 'Audio Transcription', type: 'content_moderation', status: "pending", difficulty: 'hard', reward_per_unit: 30, deadline: '2023-12-31', total_units: 100, completed_units: 41, description: 'Transcribe audio files into text, including speaker identification and timestamps.' },
-        ];
-        setMyTask(mockTask);
+        setMyTask(mockTasks);
       } finally {
         setLoading(false);
       }

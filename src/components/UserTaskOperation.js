@@ -12,8 +12,81 @@ function UserTaskOperation() {
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const mockImageUrl = [
+    { url: 'https://demofrontendhcjiang2.blob.core.windows.net/hopework/image%20(1).png', labels: ['rice', 'wheat', 'sorghum', 'barnyard grass'] },
+    { url: 'https://demofrontendhcjiang2.blob.core.windows.net/hopework/image%20(2).png', labels: ['rice', 'wheat', 'sorghum', 'barnyard grass'] },
+    { url: 'https://demofrontendhcjiang2.blob.core.windows.net/hopework/image%20(3).png', labels: ['rice', 'wheat', 'sorghum', 'barnyard grass'] },
+    { url: 'https://demofrontendhcjiang2.blob.core.windows.net/hopework/image%20(4).png', labels: ['rice', 'wheat', 'sorghum', 'barnyard grass'] },
+    { url: 'https://demofrontendhcjiang2.blob.core.windows.net/hopework/image.png', labels: ['rice', 'wheat', 'sorghum', 'barnyard grass'] },
+  ];
 
   const fetchTaskDetails = useCallback(async () => {
+    // Add mock task data
+    const mockTask = [
+      {
+        id: 1,
+        title: 'Local Advertisement Image Collection',
+        type: 'Image Collection',
+        difficulty: 'easy',
+        status: 'In Progress',
+        description: 'Users are asked to take pictures of local advertisements with their phones. The images should clearly show the text on the advertisements and include background context such as shops, buildings, or streets where the advertisements are located. This helps provide a comprehensive view of the advertisement’s environment. The goal is to gather diverse advertisements from various locations to analyze marketing trends and strategies. Ensure the images are clear and the text is legible. Avoid taking pictures of people without their consent.',
+        reward_per_unit: 2,
+        total_units: 1000,
+        completed_units: 86,
+        deadline: '2025-01-31'
+      },
+      {
+        id: 2,
+        title: 'Crop Species Classification',
+        type: 'Image Classification',
+        difficulty: 'medium',
+        status: 'Not Started',
+        description: 'This task involves identifying the species of crops in provided images. Users will be shown pictures of different crops(and weeds) and need to classify them correctly. This helps in monitoring agricultural fields and managing crop health. Users should have basic knowledge of agricultural crops to perform this task accurately. The task aims to support farmers in distinguishing between crops and weeds, thereby improving crop management practices.',
+        reward_per_unit: 10,
+        total_units: 500,
+        completed_units: 0,
+        deadline: '2024-11-15'
+      },
+      {
+        id: 3,
+        title: 'Local Handicrafts Data Labelling',
+        type:'Data Labelling',
+        difficulty:'easy',
+        status:'In Progress',
+        description:'In this task, users are required to identify and label local handicrafts. Users will be provided with images of various handicrafts and need to label them with the correct names and descriptions. This task helps in documenting and preserving local cultural heritage. Users should have some knowledge of local handicrafts to perform this task accurately. The goal is to create a comprehensive database of local handicrafts, which can be used for cultural preservation and promotion.',
+        reward_per_unit: 5,
+        total_units: 100,
+        completed_units: 23,
+        deadline: '2024-10-01'
+      },
+      {
+        id: 4,
+        title: 'Sentiment Analysis',
+        type: 'Language Processing',
+        difficulty: 'hard',
+        status: 'In Progress',
+        description: 'This task involves analyzing the sentiment of provided texts. Users will be given various text samples and need to determine whether the sentiment expressed is positive, negative, or neutral. This helps in understanding public opinion and emotional responses to different topics. Users should have good comprehension skills and the ability to interpret the tone and context of the texts accurately. The goal is to create a dataset that reflects the emotional tone of the texts, which can be used for further analysis and research.',
+        reward_per_unit: 18,
+        total_units: 200,
+        completed_units: 50,
+        deadline: '2024-09-30'
+      },
+      {
+        id: 5,
+        title: 'Audio Transcription',
+        type: 'Content Moderation',
+        difficulty: 'medium',
+        status: 'Not Started',
+        description: 'This task requires users to transcribe audio recordings into text. Users will be provided with audio files containing spoken content, and they need to accurately transcribe the speech into text. This task helps in converting spoken information into a written format for documentation and analysis. Users should have good listening skills and attention to detail to ensure accurate transcription. The goal is to create a reliable written record of the audio content.',
+        reward_per_unit: 8,
+        total_units: 75,
+        completed_units: 0,
+        deadline: '2025-08-31'
+      }
+    ].find(task => task.id === parseInt(id));
+    // mock end
     try {
       setLoading(true);
       const controller = new AbortController();
@@ -28,19 +101,6 @@ function UserTaskOperation() {
       const data = await response.json();
       setTask(data);
     } catch (err) {
-      // Mock task data
-      const mockTask = {
-        id: id,
-        title: 'Image Classification Task',
-        type: 'Image Processing',
-        difficulty: 'easy',
-        status: 'In Progress',
-        description: 'Classify and label a set of images',
-        reward_per_unit: 5,
-        total_units: 100,
-        completed_units: 20,
-        deadline: '2023-07-31'
-      };
       setTask(mockTask);
       setError(false);
     } finally {
@@ -51,6 +111,21 @@ function UserTaskOperation() {
   useEffect(() => {
     fetchTaskDetails();
   }, [fetchTaskDetails]);
+
+  const handleClassify = (label) => {
+    // Logic to handle classification
+    console.log(`Image ${currentImageIndex} classified as ${label}`);
+    handleNextImage();
+  };
+
+  const handleNextImage = () => {
+    if (currentImageIndex < mockImageUrl.length - 1) {
+      setCurrentImageIndex(currentImageIndex + 1);
+    } else {
+      // Task completed
+      navigate('/user/my-tasks');
+    }
+  };
 
   const handleSubmitTask = () => {
     const controller = new AbortController();
@@ -191,47 +266,97 @@ function UserTaskOperation() {
         <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: '#1976d2' }}>
           Operation Area
         </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={4}>
-            <Button 
-              variant="contained" 
-              fullWidth
-              onClick={() => console.log('Click operation')}
-              sx={{ 
-                backgroundColor: '#4caf50',
-                '&:hover': { backgroundColor: '#45a049' }
-              }}
-            >
-              Click
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Button 
-              variant="contained" 
-              fullWidth
-              onClick={() => console.log('Categorize operation')}
-              sx={{ 
-                backgroundColor: '#ff9800',
-                '&:hover': { backgroundColor: '#f57c00' }
-              }}
-            >
-              Categorize
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Button 
-              variant="contained" 
-              fullWidth
-              onClick={() => console.log('Mark operation')}
-              sx={{ 
-                backgroundColor: '#2196f3',
-                '&:hover': { backgroundColor: '#1976d2' }
-              }}
-            >
-              Mark
-            </Button>
-          </Grid>
-        </Grid>
+        {task && task.type === 'Image Classification' ? (
+          <Typography variant="body1" paragraph>
+            This is an image classification task. Please click the "Categorize" button below to start the classification operation.
+            <Box sx={{ position: 'relative', paddingTop: '2rem' }}>
+              <Container maxWidth="md">
+                <Typography variant="h4" gutterBottom align="center">
+                  {task.name}
+                </Typography>
+                <Paper elevation={3} sx={{ padding: '2rem', marginTop: '2rem' }}>
+                  <Box sx={{ width: '100%', height: '400px', backgroundColor: '#f0f0f0', marginBottom: '2rem'}}>
+                    <img
+                      src={mockImageUrl[currentImageIndex].url}
+                      alt={`Classification ${currentImageIndex + 1}`}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                    />
+                    <Typography variant="body1" align="left" sx={{ paddingTop: '0' }}>
+                      Image {currentImageIndex + 1}
+                    </Typography>
+                  </Box>
+                  <Grid container spacing={2} justifyContent="center">
+                    {mockImageUrl[currentImageIndex].labels.map((label, index) => (
+                      <Grid item key={index}>
+                        <Chip 
+                          label={label} 
+                          onClick={() => handleClassify(label)} 
+                          color="primary" 
+                          clickable
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem' }}>
+                    <Button variant="contained" color="primary" onClick={handleNextImage}>
+                      Next Image
+                    </Button>
+                  </Box>
+                </Paper>
+              </Container>
+            </Box>
+          </Typography>
+        ) : (
+          <Typography variant="body1" paragraph>
+            This is a regular task. Please select the appropriate operation button according to the task requirements.
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={4}>
+                <Button 
+                  variant="contained" 
+                  fullWidth
+                  onClick={() => console.log('Click operation')}
+                  sx={{ 
+                    backgroundColor: '#4caf50',
+                    '&:hover': { backgroundColor: '#45a049' }
+                  }}
+                >
+                  Click
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Button 
+                  variant="contained" 
+                  fullWidth
+                  onClick={() => console.log('Categorize operation')}
+                  sx={{ 
+                    backgroundColor: '#ff9800',
+                    '&:hover': { backgroundColor: '#f57c00' }
+                  }}
+                >
+                  Categorize
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Button 
+                  variant="contained" 
+                  fullWidth
+                  onClick={() => console.log('Mark operation')}
+                  sx={{ 
+                    backgroundColor: '#2196f3',
+                    '&:hover': { backgroundColor: '#1976d2' }
+                  }}
+                >
+                  Mark
+                </Button>
+              </Grid>
+            </Grid>
+          </Typography>
+        )}
+        
       </Box>
       <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
         <Button
